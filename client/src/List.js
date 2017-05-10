@@ -26,6 +26,8 @@ class List extends Component {
       playing: false,
       pos: 0,
       contents :'',
+      likelihoodFilterOperation:'<=',
+      likelihoodFilterValue:'',
       name
     }
     this.handleTogglePlay = this.handleTogglePlay.bind(this);
@@ -143,171 +145,70 @@ component.setState({
       accessor: 'text',// Custom cell components!
       filterMethod: (filter, row) => (row[filter.id].includes(filter.value))
     },{
-
-
       header: 'likelihood',
       accessor: 'likelihood',
-      id: 'over',
+      filterMethod: (filter, row) => {
+      console.log({filter, row});
+      if("all" == filter.value.operation){
+       return true;
+       }
+       if(row[filter.id] == "Empty text"){
+         return false;
+       }
+       if("<=" == filter.value.operation){
+         return row[filter.id] <= filter.value.value;
+       }
+       if(">" == filter.value.operation){
+         return row[filter.id] > filter.value.value;
+       }
 
-filterMethod: (filter, row) => {
-  if (filter.value === 'all') {
-    return true
-  }
-  if (filter.value === 'one') {
-    return row[filter.id] == 1
-  }
-  if (filter.value === 'zero-nine') {
-    return row[filter.id] == 0.9
-  }
-  if (filter.value === 'zero-eight') {
-    return row[filter.id] == 0.8
-  }
-  if (filter.value === 'zero-seven') {
-    return row[filter.id] == 0.7
-  }
-  if (filter.value === 'zero-six') {
-    return row[filter.id] == 0.6
-  }
-  if (filter.value === 'zero-five') {
-    return row[filter.id] == 0.5
-  }
-  if (filter.value === 'zero-four') {
-    return row[filter.id] == 0.4
-  }
-  if (filter.value === 'zero-three') {
-    return row[filter.id] == 0.3
-  }
-  if (filter.value === 'zero-two') {
-    return row[filter.id] == 0.2
-  }
-  if (filter.value === 'zero-one') {
-    return row[filter.id] == 0.1
-  }
-  if (filter.value === 'zero') {
-    return row[filter.id] == 0
-  }
-  if (filter.value === 'zero-nine-') {
-    return row[filter.id] >= 0.9
-  }
-  if (filter.value === 'zero-eight-') {
-    return row[filter.id] >= 0.8
-  }
-  if (filter.value === 'zero-seven-') {
-    return row[filter.id] >= 0.7
-  }
-  if (filter.value === 'zero-six-') {
-    return row[filter.id] >= 0.6
-  }
-  if (filter.value === 'zero-five-') {
-    return row[filter.id] >= 0.5
-  }
-  if (filter.value === 'zero-four-') {
-    return row[filter.id] >= 0.4
-  }
-  if (filter.value === 'zero-three-') {
-    return row[filter.id] >= 0.3
-  }
-  if (filter.value === 'zero-two-') {
-    return row[filter.id] >= 0.2
-  }
-  if (filter.value === 'zero-one-') {
-    return row[filter.id] >= 0.1
-  }
-
-
-  if (filter.value === 'zero-nine+') {
-    return row[filter.id] > 0.9
-  }
-  if (filter.value === 'zero-eight+') {
-    return row[filter.id] > 0.8
-  }
-  if (filter.value === 'zero-seven+') {
-    return row[filter.id] > 0.7
-  }
-  if (filter.value === 'zero-six+') {
-    return row[filter.id] > 0.6
-  }
-  if (filter.value === 'zero-five+') {
-    return row[filter.id] > 0.5
-  }
-  if (filter.value === 'zero-four+') {
-    return row[filter.id] > 0.4
-  }
-  if (filter.value === 'zero-three+') {
-    return row[filter.id] > 0.3
-  }
-  if (filter.value === 'zero-two+') {
-    return row[filter.id] > 0.2
-  }
-  if (filter.value === 'zero-one+') {
-    return row[filter.id] > 0.1
-  }
-
-
-
-  if (filter.value === 'zero') {
-    return row[filter.id] == 0
-  }
-  return row[filter.id] < 21
+       if(">=" == filter.value.operation){
+         return row[filter.id] >= filter.value.value;
+       }
+       if("=" == filter.value.operation){
+         return row[filter.id] == filter.value.value;
+       }
+       if("<" == filter.value.operation){
+         return row[filter.id] < filter.value.value;
+       }
 },
-filterRender: ({filter, onFilterChange}) => (
+filterRender: ({filter, onFilterChange}) =>{
+  return (
+  <div>
   <select
-    onChange={event => onFilterChange(event.target.value)}
-    style={{width: '100%'}}
-    value={filter ? filter.value : 'all'}>
-    <option value="false">All</option>
-    <option value="one">==1</option>
-    <option value="zero-nine">==0.9</option>
-    <option value="zero-eight">==0.8</option>
-    <option value="zero-seven">==0.7</option>
-    <option value="zero-six">==0.6</option>
-    <option value="zero-five">==0.5</option>
-    <option value="zero-four">==0.4</option>
-    <option value="zero-three">==0.3</option>
-    <option value="zero-two">==0.2</option>
-    <option value="zero-one">==0.1</option>
-    <option value="zero">==0</option>
-    <option value="zero-nine-">>=0.9</option>
-    <option value="zero-eight-">>=0.8</option>
-    <option value="zero-seven-">>=0.7</option>
-    <option value="zero-six-">>=0.6</option>
-    <option value="zero-five-">>=0.5</option>
-    <option value="zero-four-">>=0.4</option>
-    <option value="zero-three-">>=0.3</option>
-    <option value="zero-two-">>=0.2</option>
-    <option value="zero-one-">>=0.1</option>
+    onChange={
+      event => {
+        var value = event.target.value;
+        //this.setState({likelihoodFilterOperation: value})
+        onFilterChange({operation: value, value: (filter ? filter.value.value : 0) })
+      }
+    }
+    value={filter ? filter.value.operation : 'all'}>
+    <option value="all">All</option>
+    <option value="=">=</option>
+    <option value=">">&gt;</option>
+    <option value="<=">&lt;=</option>
 
-    <option value="zero-nine+">>0.9</option>
-    <option value="zero-eight+">>0.8</option>
-    <option value="zero-seven+">>0.7</option>
-    <option value="zero-six+">>0.6</option>
-    <option value="zero-five+">>0.5</option>
-    <option value="zero-four+">>0.4</option>
-    <option value="zero-three+">>0.3</option>
-    <option value="zero-two+">>0.2</option>
-    <option value="zero-one+">>0.1</option>
 
-    <option value="zero-nine+">0.9</option>
-    <option value="zero-eight+">>0.8</option>
-    <option value="zero-seven+">>0.7</option>
-    <option value="zero-six+">>0.6</option>
-    <option value="zero-five+">>0.5</option>
-    <option value="zero-four+">>0.4</option>
-    <option value="zero-three+">>0.3</option>
-    <option value="zero-two+">>0.2</option>
-    <option value="zero-one+">>0.1</option>
-    <option value="zero-one-">  0.1  </option>
+    <option value="<">&lt;</option>
+    <option value=">=">&gt;=</option>
   </select>
-)
+  <input
+    onChange={
+      event => {
+        var value = event.target.value;
+        onFilterChange({operation: (filter ? filter.value.operation : 'all'), value: value})
+      }
+    }
+    value={filter ? filter.value.value : 0}/>
+  </div>
+)}
 }]
-const theme = {
-  base00: '#272822'};
-
-
-    //onMount
+const theme = {base00: '#272822'};
     return (
       <div>
       <div id ="menu">
+
       <Select
       placeholder = {'Pick user'}
       clearable= {false}
@@ -370,14 +271,20 @@ const theme = {
 
                   </Switch>
                   <br/>
-                    On update/Off update
+                    Off update/On update
 
               </div>
 
             <JSONTree data={this.state.contents.contents}
+
+            theme={theme} />
+            <JSONTree data={"http://localhost:3000/users/"+this.state.selectedUser+"/recognize/"+this.state.contents.contents}
+
             theme={theme} />
             </div>
-              </div>
+
+
+        </div>
     );
   }
 }
