@@ -45,10 +45,33 @@ var replyInformation = function(name ,filename)
   }
 }
 
+
+
+
+
+
+/*
+
+
+
+
+var recognizeInformation = function(name,filename)
+{
+  var timestamp= filename;
+  var content = fs.readFileSync('./users' + name + '/recognize' + filename)
+  var contents = JSON.parse(content)
+  var information = contents.replykey;
+  return{
+    information
+  }
+}
+*/
 app.get('/users/:name/recognize/:recognizeFileName', function(req,res)
 {
   fs.readFile("./users/"+req.params.name+"/recognize/"+req.params.recognizeFileName, function (err,data) {
     if (err) {
+
+      console.log(contents)
       res.writeHead(404);
       res.end(JSON.stringify(err));
       return;
@@ -57,6 +80,43 @@ app.get('/users/:name/recognize/:recognizeFileName', function(req,res)
     res.end(data);
   });
 })
+
+
+
+/*
+
+app.get('/users/:name/recognize' ,(req,res) =>
+{
+  fs.readdir(json+req.params.name+recognize,(err,fileUser)=>
+  {
+    if(err)
+    {
+      res.status(500).send();
+    }
+    else {
+      var goodJson=[];
+      for(var i=0;i<fileUser.length;i++)
+      {
+        if(fileUser[i].endsWith(".json"))
+        {
+          goodJson.push(recognizeInformation(req.params.name,fileUser[i]));
+        }
+      }
+      res.status(200).send({fileNames:goodJson});
+    }
+  });
+
+})
+*/
+
+
+
+
+
+
+
+
+
 
 app.get('/users/:name/replies' ,(req,res) =>
 {
@@ -111,8 +171,7 @@ app.get('/users/:name/replies/:repliesFileName', function(req,res)
     var sound =contents.replykey;
     var error = contents.error;
     if (contents.words[0]==undefined){
-
-      res.status(200).send({replyText:'Empty Text', likelihoodText:'Empty Text', error, sound,contents,name})
+      res.status(200).send({replyText:'Empty Text', likelihoodText:'Empty Text'})
     }
 
     else{
